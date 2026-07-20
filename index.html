@@ -32,7 +32,6 @@
   .mono{font-family:'JetBrains Mono', monospace;}
   a{color:inherit;}
 
-  /* subtle grid texture */
   .grid-bg{
     background-image:
       linear-gradient(var(--line) 1px, transparent 1px),
@@ -71,7 +70,6 @@
   }
   .eyebrow::before{content:''; width:20px; height:1px; background:var(--green);}
 
-  /* HERO */
   .hero{padding-top:70px; padding-bottom:60px;}
   .hero h1{
     font-family:'JetBrains Mono'; font-weight:800; font-size:clamp(28px, 4.2vw, 50px);
@@ -91,7 +89,6 @@
   .btn-ghost{color:var(--text);}
   .btn-ghost:hover{border-color:var(--muted);}
 
-  /* STATUS BOARD */
   .board{
     margin-top:56px; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--panel);
   }
@@ -126,13 +123,11 @@
     to{transform:translateX(-100%);}
   }
 
-  /* SECTION HEADERS */
   h2.section-title{
     font-family:'JetBrains Mono'; font-size:clamp(22px,3vw,32px); font-weight:700; letter-spacing:-0.3px;
   }
   .section-intro{color:var(--muted); max-width:620px; margin-top:10px; font-size:15px;}
 
-  /* ABOUT */
   .about-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; margin-top:44px;}
   @media (max-width:860px){ .about-grid{grid-template-columns:1fr;} }
   .about-grid p{margin-bottom:16px; color:#C9D2D9;}
@@ -141,7 +136,6 @@
   .stat-list .num{font-family:'JetBrains Mono'; font-weight:800; font-size:28px; color:var(--green);}
   .stat-list .lbl{font-size:13px; color:var(--muted); margin-top:2px;}
 
-  /* PROJECTS / POSTMORTEMS */
   .incident{
     border:1px solid var(--line); border-radius:8px; margin-top:24px; overflow:hidden; background:var(--panel);
   }
@@ -163,7 +157,6 @@
     background:var(--panel-alt); border:1px solid var(--line); color:var(--muted);
   }
 
-  /* STACK */
   .stack-groups{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px;}
   @media (max-width:760px){ .stack-groups{grid-template-columns:1fr 1fr;} }
   @media (max-width:520px){ .stack-groups{grid-template-columns:1fr;} }
@@ -173,7 +166,6 @@
   .stack-card li{font-size:13.5px; color:#C9D2D9; padding-left:14px; position:relative;}
   .stack-card li::before{content:'›'; position:absolute; left:0; color:var(--muted);}
 
-  /* CONTACT */
   .contact-box{
     margin-top:40px; border:1px solid var(--line); border-radius:10px; padding:40px;
     background:linear-gradient(160deg, var(--panel), var(--panel-alt));
@@ -243,7 +235,7 @@
     <div class="about-grid">
       <div>
         <p>Basé à <strong>Casablanca</strong>, j'interviens depuis plusieurs années sur l'infrastructure d'observabilité d'un groupe bancaire présent dans <strong>18 filiales</strong> en Afrique. Mon rôle : faire en sorte que <strong>chaque transaction de paiement</strong> — facturier, switch interbancaire, marketplace, simulateur de crédit — soit tracée, mesurée, et que toute dérive déclenche une alerte avant l'incident client.</p>
-        <p>Je travaille sur <strong>Elastic Cloud (Azure)</strong> au quotidien : Fleet et Elastic Agent pour la collecte, des pipelines d'ingestion sur-mesure pour des formats hétérogènes (Rails, WebLogic, Go, Kafka), des <strong>Watchers Painless</strong> pour la détection de seuils métier, et l'APM pour la cartographie applicative. Sur les 5 grands projets du groupe, je couvre systématiquement les trois volets : alerting, ingestion et supervision de performance.</p>
+        <p>Je travaille sur <strong>Elastic Cloud (Azure)</strong> au quotidien : déploiement et administration de l'infrastructure Elastic elle-même (clusters, tiers cold/warm, scaling), Fleet et Elastic Agent pour la collecte, des pipelines d'ingestion sur-mesure pour des formats hétérogènes (Rails, WebLogic, Go, Kafka), des <strong>Watchers Painless</strong> pour la détection de seuils métier, et l'APM pour la cartographie applicative. Sur les 5 grands projets du groupe, je couvre systématiquement les trois volets : alerting, ingestion et supervision de performance.</p>
         <p>J'aime particulièrement le travail d'astreinte et de résolution d'incident : comprendre pourquoi un cluster passe au rouge, pourquoi un pipeline rejette du JSON, et documenter la solution pour que l'équipe suivante n'ait pas à la redécouvrir.</p>
       </div>
       <div class="stat-list">
@@ -258,16 +250,17 @@
   <section id="projets">
     <div class="eyebrow">projets phares</div>
     <h2 class="section-title">5 plateformes, un même niveau d'exigence</h2>
-    <p class="section-intro">Sur chacun de ces projets, je couvre les trois mêmes volets : alerting métier, ingestion des logs, et supervision de performance (APM).</p>
+    <p class="section-intro">Sur chacun de ces projets, je couvre les mêmes volets : alerting métier, ingestion des logs, supervision de performance (APM), et documentation/formation.</p>
 
     <div class="stack-groups" style="grid-template-columns:repeat(2,1fr); margin-top:40px;">
       <div class="stack-card">
         <h3>BILLPAY</h3>
         <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Plateforme de paiement de factures (mobile money, énergie, eau...) pour les facturiers des filiales.</p>
         <ul>
-          <li><strong style="color:var(--text);">Alerting</strong> — Watcher de seuils de facturation (montant mensuel/journalier), notifications HTML en français avec barres de progression</li>
-          <li><strong style="color:var(--text);">Ingestion</strong> — pipelines pour une dizaine d'adaptateurs facturiers (MTN, WAVE, SODECI, MOOV, CIE, NITA, AMANA, ORANGE...)</li>
-          <li><strong style="color:var(--text);">APM</strong> — suivi de la latence et des erreurs du moteur de notification BillPay</li>
+          <li><strong style="color:var(--text);">Alerting</strong> • Watcher de seuils de facturation (montant mensuel/journalier), notifications HTML en français avec barres de progression</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> • pipelines pour une dizaine d'adaptateurs facturiers (MTN, WAVE, SODECI, MOOV, CIE, NITA, AMANA, ORANGE...)</li>
+          <li><strong style="color:var(--text);">APM</strong> • suivi de la latence et des erreurs du moteur de notification BillPay</li>
+          <li><strong style="color:var(--text);">Documentation & formation</strong> • guides d'utilisation des dashboards et alertes, formation des équipes</li>
         </ul>
       </div>
 
@@ -275,9 +268,10 @@
         <h3>SMARTVISTA</h3>
         <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Switch monétique / gestion des cartes bancaires et des autorisations de transaction.</p>
         <ul>
-          <li><strong style="color:var(--text);">Alerting</strong> — dashboards et Watchers sur les flux d'autorisation et les rejets de transaction carte</li>
-          <li><strong style="color:var(--text);">Ingestion</strong> — pipelines dédiés aux logs applicatifs SmartVista</li>
-          <li><strong style="color:var(--text);">APM</strong> — suivi de performance des services de switching</li>
+          <li><strong style="color:var(--text);">Alerting</strong> • dashboards et Watchers sur les flux d'autorisation et les rejets de transaction carte</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> • pipelines dédiés aux logs applicatifs SmartVista</li>
+          <li><strong style="color:var(--text);">APM</strong> • suivi de performance des services de switching</li>
+          <li><strong style="color:var(--text);">Documentation & formation</strong> • guides d'utilisation des dashboards et alertes, formation des équipes</li>
         </ul>
       </div>
 
@@ -285,9 +279,10 @@
         <h3>PI-SPI</h3>
         <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Système de paiement instantané interbancaire (Bridge SFN), déployé sur 6 pays.</p>
         <ul>
-          <li><strong style="color:var(--text);">Alerting</strong> — dashboard de statut des participants SFN, suivi des rejets Oracle</li>
-          <li><strong style="color:var(--text);">Ingestion</strong> — parsing des logs Bridge SFN (sfn_log_parser_v4) pour les 6 pays couverts</li>
-          <li><strong style="color:var(--text);">APM</strong> — cartographie des services impliqués dans la chaîne de paiement instantané</li>
+          <li><strong style="color:var(--text);">Alerting</strong> • dashboard de statut des participants SFN, suivi des rejets Oracle</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> • parsing des logs Bridge SFN (sfn_log_parser_v4) pour les 6 pays couverts</li>
+          <li><strong style="color:var(--text);">APM</strong> • cartographie des services impliqués dans la chaîne de paiement instantané</li>
+          <li><strong style="color:var(--text);">Documentation & formation</strong> • guides d'utilisation des dashboards et alertes, formation des équipes</li>
         </ul>
       </div>
 
@@ -295,9 +290,10 @@
         <h3>MARKETPLACE</h3>
         <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Plateforme de services marchands du groupe.</p>
         <ul>
-          <li><strong style="color:var(--text);">Alerting</strong> — dashboards et Watchers sur la disponibilité et les erreurs applicatives</li>
-          <li><strong style="color:var(--text);">Ingestion</strong> — pipelines pour les logs applicatifs Marketplace</li>
-          <li><strong style="color:var(--text);">APM</strong> — supervision de la performance des parcours utilisateurs</li>
+          <li><strong style="color:var(--text);">Alerting</strong> • dashboards et Watchers sur la disponibilité et les erreurs applicatives</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> • pipelines pour les logs applicatifs Marketplace</li>
+          <li><strong style="color:var(--text);">APM</strong> • supervision de la performance des parcours utilisateurs</li>
+          <li><strong style="color:var(--text);">Documentation & formation</strong> • guides d'utilisation des dashboards et alertes, formation des équipes</li>
         </ul>
       </div>
 
@@ -305,9 +301,10 @@
         <h3>SIMULATEUR DE CRÉDIT</h3>
         <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Outil de simulation de crédit à destination des clients et des agences.</p>
         <ul>
-          <li><strong style="color:var(--text);">Alerting</strong> — dashboards et Watchers sur la disponibilité et les erreurs du simulateur</li>
-          <li><strong style="color:var(--text);">Ingestion</strong> — pipelines pour les logs applicatifs du simulateur</li>
-          <li><strong style="color:var(--text);">APM</strong> — suivi de performance et des temps de réponse</li>
+          <li><strong style="color:var(--text);">Alerting</strong> • dashboards et Watchers sur la disponibilité et les erreurs du simulateur</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> • pipelines pour les logs applicatifs du simulateur</li>
+          <li><strong style="color:var(--text);">APM</strong> • suivi de performance et des temps de réponse</li>
+          <li><strong style="color:var(--text);">Documentation & formation</strong> • guides d'utilisation des dashboards et alertes, formation des équipes</li>
         </ul>
       </div>
     </div>
