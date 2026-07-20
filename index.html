@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ismael Ibrahim Aguissa — Ingénieur Observabilité & ELK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0E12;
+    --panel:#10161C;
+    --panel-alt:#141C23;
+    --line:#202A33;
+    --text:#E4EAEE;
+    --muted:#8B99A6;
+    --green:#34D399;
+    --amber:#F5B045;
+    --red:#F0654F;
+    --blue:#5EB1EF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
+  a{color:inherit;}
+
+  /* subtle grid texture */
+  .grid-bg{
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity:0.35;
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+  }
+
+  header{
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 6vw;
+    background:rgba(10,14,18,0.85);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono'; font-weight:700; letter-spacing:0.5px; font-size:14px;}
+  .dot-live{width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 0 rgba(52,211,153,0.6); animation:pulse 2.4s infinite;}
+  @media (prefers-reduced-motion: reduce){ .dot-live{animation:none;} }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(52,211,153,0.55);}
+    70%{box-shadow:0 0 0 8px rgba(52,211,153,0);}
+    100%{box-shadow:0 0 0 0 rgba(52,211,153,0);}
+  }
+  nav{display:flex; gap:28px; font-size:13px; font-family:'JetBrains Mono';}
+  nav a{color:var(--muted); text-decoration:none; transition:color .2s;}
+  nav a:hover{color:var(--text);}
+
+  main{position:relative; z-index:1;}
+  section{padding:90px 6vw; max-width:1180px; margin:0 auto;}
+  .eyebrow{
+    font-family:'JetBrains Mono'; font-size:12px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--green); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:20px; height:1px; background:var(--green);}
+
+  /* HERO */
+  .hero{padding-top:70px; padding-bottom:60px;}
+  .hero h1{
+    font-family:'JetBrains Mono'; font-weight:800; font-size:clamp(28px, 4.2vw, 50px);
+    line-height:1.15; max-width:900px; letter-spacing:-0.5px;
+  }
+  .hero h1 .hl{color:var(--green);}
+  .hero p.lede{
+    margin-top:20px; max-width:640px; color:var(--muted); font-size:17px;
+  }
+  .hero-actions{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
+  .btn{
+    font-family:'JetBrains Mono'; font-size:13px; padding:12px 20px; border-radius:4px;
+    border:1px solid var(--line); text-decoration:none; transition:all .2s; display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{background:var(--green); color:#06110C; border-color:var(--green); font-weight:700;}
+  .btn-primary:hover{background:#48e0ac;}
+  .btn-ghost{color:var(--text);}
+  .btn-ghost:hover{border-color:var(--muted);}
+
+  /* STATUS BOARD */
+  .board{
+    margin-top:56px; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--panel);
+  }
+  .board-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 20px; border-bottom:1px solid var(--line); font-family:'JetBrains Mono'; font-size:12px; color:var(--muted);
+  }
+  .board-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr));
+  }
+  .node{
+    padding:16px 18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono'; font-size:13px;
+  }
+  .node .status-row{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .node .status-row .sd{width:7px; height:7px; border-radius:50%; background:var(--green); flex-shrink:0;}
+  .node .country{font-weight:700;}
+  .node .meta{color:var(--muted); font-size:11px;}
+
+  .ticker-wrap{
+    border-top:1px solid var(--line); background:var(--panel-alt); overflow:hidden; white-space:nowrap; padding:12px 0;
+  }
+  .ticker{
+    display:inline-block; font-family:'JetBrains Mono'; font-size:12.5px; color:var(--green);
+    padding-left:100%;
+    animation:scroll-left 32s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .ticker{animation:none; padding-left:0;} }
+  .ticker span{color:var(--muted); margin:0 28px;}
+  @keyframes scroll-left{
+    from{transform:translateX(0);}
+    to{transform:translateX(-100%);}
+  }
+
+  /* SECTION HEADERS */
+  h2.section-title{
+    font-family:'JetBrains Mono'; font-size:clamp(22px,3vw,32px); font-weight:700; letter-spacing:-0.3px;
+  }
+  .section-intro{color:var(--muted); max-width:620px; margin-top:10px; font-size:15px;}
+
+  /* ABOUT */
+  .about-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; margin-top:44px;}
+  @media (max-width:860px){ .about-grid{grid-template-columns:1fr;} }
+  .about-grid p{margin-bottom:16px; color:#C9D2D9;}
+  .about-grid p strong{color:var(--text);}
+  .stat-list{border-left:2px solid var(--line); padding-left:20px; display:flex; flex-direction:column; gap:22px;}
+  .stat-list .num{font-family:'JetBrains Mono'; font-weight:800; font-size:28px; color:var(--green);}
+  .stat-list .lbl{font-size:13px; color:var(--muted); margin-top:2px;}
+
+  /* PROJECTS / POSTMORTEMS */
+  .incident{
+    border:1px solid var(--line); border-radius:8px; margin-top:24px; overflow:hidden; background:var(--panel);
+  }
+  .incident-head{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:20px;
+    padding:22px 26px; cursor:default; flex-wrap:wrap;
+  }
+  .incident-id{font-family:'JetBrains Mono'; font-size:12px; color:var(--muted); margin-bottom:8px;}
+  .incident-title{font-family:'JetBrains Mono'; font-weight:700; font-size:17px;}
+  .sev{
+    font-family:'JetBrains Mono'; font-size:11px; padding:4px 10px; border-radius:4px; height:fit-content;
+    white-space:nowrap;
+  }
+  .sev-resolved{background:rgba(52,211,153,0.12); color:var(--green); border:1px solid rgba(52,211,153,0.35);}
+  .incident-body{padding:0 26px 24px; color:#C9D2D9; font-size:14.5px;}
+  .incident-body .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;}
+  .tag{
+    font-family:'JetBrains Mono'; font-size:11px; padding:4px 9px; border-radius:4px;
+    background:var(--panel-alt); border:1px solid var(--line); color:var(--muted);
+  }
+
+  /* STACK */
+  .stack-groups{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px;}
+  @media (max-width:760px){ .stack-groups{grid-template-columns:1fr 1fr;} }
+  @media (max-width:520px){ .stack-groups{grid-template-columns:1fr;} }
+  .stack-card{border:1px solid var(--line); border-radius:8px; padding:20px; background:var(--panel);}
+  .stack-card h3{font-family:'JetBrains Mono'; font-size:13px; color:var(--amber); margin-bottom:12px; letter-spacing:1px;}
+  .stack-card ul{list-style:none; display:flex; flex-direction:column; gap:8px;}
+  .stack-card li{font-size:13.5px; color:#C9D2D9; padding-left:14px; position:relative;}
+  .stack-card li::before{content:'›'; position:absolute; left:0; color:var(--muted);}
+
+  /* CONTACT */
+  .contact-box{
+    margin-top:40px; border:1px solid var(--line); border-radius:10px; padding:40px;
+    background:linear-gradient(160deg, var(--panel), var(--panel-alt));
+    display:flex; justify-content:space-between; align-items:center; gap:30px; flex-wrap:wrap;
+  }
+  .contact-box h3{font-family:'JetBrains Mono'; font-size:20px; margin-bottom:8px;}
+  .contact-box p{color:var(--muted); font-size:14px; max-width:420px;}
+  .placeholder{color:var(--blue); font-family:'JetBrains Mono'; font-size:12px;}
+
+  footer{
+    padding:30px 6vw; border-top:1px solid var(--line); text-align:center;
+    color:var(--muted); font-family:'JetBrains Mono'; font-size:12px;
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header>
+  <div class="brand"><span class="dot-live"></span> IIA · OBSERVABILITÉ</div>
+  <nav>
+    <a href="#about">Profil</a>
+    <a href="#projets">Projets</a>
+    <a href="#incidents">Infra</a>
+    <a href="#stack">Stack</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">status: opérationnel</div>
+    <h1>Je fais tourner l'observabilité<br>de <span class="hl">18 filiales bancaires</span> en Afrique,<br>24&nbsp;h/24.</h1>
+    <p class="lede">Ismael Ibrahim Aguissa — Ingénieur DevOps & Monitoring. Je conçois, industrialise et maintiens la stack Elastic (ELK) qui surveille les systèmes de paiement d'un groupe bancaire panafricain : pipelines d'ingestion, dashboards Kibana, Watchers d'alerte et supervision APM.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#contact">Disponibilités pour missions →</a>
+      <a class="btn btn-ghost" href="#projets">Voir les projets</a>
+    </div>
+
+    <div class="board">
+      <div class="board-head">
+        <span>surveillance_filiales.yml</span>
+        <span>18/18 nœuds actifs</span>
+      </div>
+      <div class="board-grid">
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">Côte d'Ivoire</span></div><div class="meta">BillPay · SmartVista</div></div>
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">Sénégal</span></div><div class="meta">Bridge SFN · PI-SPI</div></div>
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">Mali</span></div><div class="meta">PI-SPI</div></div>
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">Burkina Faso</span></div><div class="meta">PI-SPI</div></div>
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">Bénin</span></div><div class="meta">WSO2 EI</div></div>
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">Togo</span></div><div class="meta">PI-SPI</div></div>
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">Niger</span></div><div class="meta">Middleware</div></div>
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">Madagascar</span></div><div class="meta">ISO 8583</div></div>
+        <div class="node"><div class="status-row"><span class="sd"></span><span class="country">+ 10 filiales</span></div><div class="meta">zone UEMOA & au-delà</div></div>
+      </div>
+      <div class="ticker-wrap">
+        <div class="ticker mono">
+          POST /_cluster/reroute <span>·</span> ctx.payload.montant_total &gt; seuil_mensuel <span>·</span> GET _cat/shards?h=index,state | grep UNASSIGNED <span>·</span> kafka consumer-lag &lt; 5000 <span>·</span> pipeline: sfn_log_parser_v4 <span>·</span> APM service map: 60 services <span>·</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="eyebrow">profil</div>
+    <h2 class="section-title">Du log brut au dashboard qui prévient avant la panne</h2>
+    <div class="about-grid">
+      <div>
+        <p>Basé à <strong>Casablanca</strong>, j'interviens depuis plusieurs années sur l'infrastructure d'observabilité d'un groupe bancaire présent dans <strong>18 filiales</strong> en Afrique. Mon rôle : faire en sorte que <strong>chaque transaction de paiement</strong> — facturier, switch interbancaire, marketplace, simulateur de crédit — soit tracée, mesurée, et que toute dérive déclenche une alerte avant l'incident client.</p>
+        <p>Je travaille sur <strong>Elastic Cloud (Azure)</strong> au quotidien : Fleet et Elastic Agent pour la collecte, des pipelines d'ingestion sur-mesure pour des formats hétérogènes (Rails, WebLogic, Go, Kafka), des <strong>Watchers Painless</strong> pour la détection de seuils métier, et l'APM pour la cartographie applicative. Sur les 5 grands projets du groupe, je couvre systématiquement les trois volets : alerting, ingestion et supervision de performance.</p>
+        <p>J'aime particulièrement le travail d'astreinte et de résolution d'incident : comprendre pourquoi un cluster passe au rouge, pourquoi un pipeline rejette du JSON, et documenter la solution pour que l'équipe suivante n'ait pas à la redécouvrir.</p>
+      </div>
+      <div class="stat-list">
+        <div><div class="num">18</div><div class="lbl">filiales bancaires supervisées en Afrique</div></div>
+        <div><div class="num">5</div><div class="lbl">projets phares couverts de bout en bout</div></div>
+        <div><div class="num">60+</div><div class="lbl">services applicatifs cartographiés via APM</div></div>
+        <div><div class="num">202→0</div><div class="lbl">shards non assignés résorbés lors de l'incident cluster RED</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projets">
+    <div class="eyebrow">projets phares</div>
+    <h2 class="section-title">5 plateformes, un même niveau d'exigence</h2>
+    <p class="section-intro">Sur chacun de ces projets, je couvre les trois mêmes volets : alerting métier, ingestion des logs, et supervision de performance (APM).</p>
+
+    <div class="stack-groups" style="grid-template-columns:repeat(2,1fr); margin-top:40px;">
+      <div class="stack-card">
+        <h3>BILLPAY</h3>
+        <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Plateforme de paiement de factures (mobile money, énergie, eau...) pour les facturiers des filiales.</p>
+        <ul>
+          <li><strong style="color:var(--text);">Alerting</strong> — Watcher de seuils de facturation (montant mensuel/journalier), notifications HTML en français avec barres de progression</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> — pipelines pour une dizaine d'adaptateurs facturiers (MTN, WAVE, SODECI, MOOV, CIE, NITA, AMANA, ORANGE...)</li>
+          <li><strong style="color:var(--text);">APM</strong> — suivi de la latence et des erreurs du moteur de notification BillPay</li>
+        </ul>
+      </div>
+
+      <div class="stack-card">
+        <h3>SMARTVISTA</h3>
+        <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Switch monétique / gestion des cartes bancaires et des autorisations de transaction.</p>
+        <ul>
+          <li><strong style="color:var(--text);">Alerting</strong> — dashboards et Watchers sur les flux d'autorisation et les rejets de transaction carte</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> — pipelines dédiés aux logs applicatifs SmartVista</li>
+          <li><strong style="color:var(--text);">APM</strong> — suivi de performance des services de switching</li>
+        </ul>
+      </div>
+
+      <div class="stack-card">
+        <h3>PI-SPI</h3>
+        <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Système de paiement instantané interbancaire (Bridge SFN), déployé sur 6 pays.</p>
+        <ul>
+          <li><strong style="color:var(--text);">Alerting</strong> — dashboard de statut des participants SFN, suivi des rejets Oracle</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> — parsing des logs Bridge SFN (sfn_log_parser_v4) pour les 6 pays couverts</li>
+          <li><strong style="color:var(--text);">APM</strong> — cartographie des services impliqués dans la chaîne de paiement instantané</li>
+        </ul>
+      </div>
+
+      <div class="stack-card">
+        <h3>MARKETPLACE</h3>
+        <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Plateforme de services marchands du groupe.</p>
+        <ul>
+          <li><strong style="color:var(--text);">Alerting</strong> — dashboards et Watchers sur la disponibilité et les erreurs applicatives</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> — pipelines pour les logs applicatifs Marketplace</li>
+          <li><strong style="color:var(--text);">APM</strong> — supervision de la performance des parcours utilisateurs</li>
+        </ul>
+      </div>
+
+      <div class="stack-card" style="grid-column:1 / -1;">
+        <h3>SIMULATEUR DE CRÉDIT</h3>
+        <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">Outil de simulation de crédit à destination des clients et des agences.</p>
+        <ul>
+          <li><strong style="color:var(--text);">Alerting</strong> — dashboards et Watchers sur la disponibilité et les erreurs du simulateur</li>
+          <li><strong style="color:var(--text);">Ingestion</strong> — pipelines pour les logs applicatifs du simulateur</li>
+          <li><strong style="color:var(--text);">APM</strong> — suivi de performance et des temps de réponse</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="incidents">
+    <div class="eyebrow">interventions techniques</div>
+    <h2 class="section-title">Cas d'infrastructure marquants</h2>
+    <p class="section-intro">Présentées au format post-mortem, comme je les documente en interne.</p>
+
+    <div class="incident">
+      <div class="incident-head">
+        <div>
+          <div class="incident-id">INC · CLUSTER RED</div>
+          <div class="incident-title">Récupération d'un cluster Elasticsearch en état RED</div>
+        </div>
+        <span class="sev sev-resolved">résolu</span>
+      </div>
+      <div class="incident-body">
+        <p>202 shards non assignés bloquaient les index <span class="mono">restored-*</span> sur le tier cold. Diagnostic de l'allocation, puis migration ciblée des index concernés du tier cold vers le tier warm pour lever le blocage de ressources et restaurer l'état GREEN du cluster.</p>
+        <div class="tags"><span class="tag">Elastic Cloud</span><span class="tag">Tiering cold/warm</span><span class="tag">Allocation shards</span></div>
+      </div>
+    </div>
+
+    <div class="incident">
+      <div class="incident-head">
+        <div>
+          <div class="incident-id">INFRA · KAFKA</div>
+          <div class="incident-title">Supervision d'un cluster Kafka (Strimzi / KRaft)</div>
+        </div>
+        <span class="sev sev-resolved">en production</span>
+      </div>
+      <div class="incident-body">
+        <p>Mise en place de Watchers dédiés au lag consommateur, à la santé des partitions et à la disponibilité des brokers, pour anticiper les ruptures de flux avant qu'elles n'impactent les traitements avals.</p>
+        <div class="tags"><span class="tag">Kafka</span><span class="tag">Strimzi</span><span class="tag">Kubernetes</span></div>
+      </div>
+    </div>
+
+    <div class="incident">
+      <div class="incident-head">
+        <div>
+          <div class="incident-id">INFRA · APM</div>
+          <div class="incident-title">Cartographie applicative et supervision APM</div>
+        </div>
+        <span class="sev sev-resolved">en production</span>
+      </div>
+      <div class="incident-body">
+        <p>Déploiement d'agents APM Java sur des serveurs WebLogic, construction d'une cartographie de plus de 60 services pour visualiser les dépendances et localiser rapidement l'origine d'une latence ou d'une erreur en cascade.</p>
+        <div class="tags"><span class="tag">Elastic APM</span><span class="tag">WebLogic</span><span class="tag">Java</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="eyebrow">stack technique</div>
+    <h2 class="section-title">Outils que j'utilise au quotidien</h2>
+    <div class="stack-groups">
+      <div class="stack-card">
+        <h3>OBSERVABILITÉ</h3>
+        <ul>
+          <li>Elastic Cloud (Azure)</li>
+          <li>Fleet & Elastic Agent</li>
+          <li>Kibana (dashboards, Lens)</li>
+          <li>Elasticsearch Watchers</li>
+          <li>Elastic APM</li>
+          <li>Painless scripting</li>
+        </ul>
+      </div>
+      <div class="stack-card">
+        <h3>DONNÉES & MESSAGING</h3>
+        <ul>
+          <li>Logstash / Ingest pipelines</li>
+          <li>Kafka (Strimzi, KRaft)</li>
+          <li>Oracle (JDBC)</li>
+          <li>Elasticsearch Transforms</li>
+        </ul>
+      </div>
+      <div class="stack-card">
+        <h3>PLATEFORME & API</h3>
+        <ul>
+          <li>Kong API Gateway</li>
+          <li>WSO2</li>
+          <li>Docker / Kubernetes</li>
+          <li>WebLogic</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="eyebrow">contact</div>
+    <h2 class="section-title">Disponible pour missions freelance & conseil ELK</h2>
+    <div class="contact-box">
+      <div>
+        <h3>Discutons de votre besoin d'observabilité</h3>
+        <p>Audit de cluster, mise en place de dashboards, alerting métier, migration ou montée en charge — je peux intervenir en mission ponctuelle ou en accompagnement long.</p>
+      </div>
+      <div>
+        <p><a href="mailto:ehloaguissa@gmail.com" style="color:var(--blue); text-decoration:none;">ehloaguissa@gmail.com</a></p>
+        <p><a href="https://www.linkedin.com/in/ismael-aguissa-804b78255" style="color:var(--blue); text-decoration:none;" >linkedin.com/in/ismael-aguissa-804b78255</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Ismael Ibrahim Aguissa — Ingénieur DevOps & Observabilité · Casablanca · <span id="year"></span>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
